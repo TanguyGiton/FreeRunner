@@ -3,12 +3,19 @@ import os
 import pickle
 from tkinter import*
 
-
 def recupscores():
-    file_scores = open("scores.tkv2","rb")
-    scores = pickle.load(file_scores)
-    file_scores.close()
-    return scores
+	try:
+		file_scores = open("scores.tkv2","rb")
+	except FileNotFoundError:
+		scores = [[1000, 2000, 5000],["Kim-Van", "Valentin", "Tanguy"]]
+		file_scores = open("scores.tkv2","wb")
+		pickle.dump(scores,file_scores)
+		return scores
+	else:
+		file_scores = open("scores.tkv2","rb")
+		scores = pickle.load(file_scores)
+		file_scores.close()
+		return scores
 
 
 def enregscore(scores):
@@ -97,13 +104,13 @@ def score_jeu(score_joueur):
     trierliste(scores[0],scores[1])
     enregscore(scores)
 
-    if score_joueur > scores[0][-1] :
+    if len(scores[0]) < 10 or score_joueur > scores[0][-1] :
         nv_score=Toplevel()
         nv_score.title("Nouveau Meilleur Score")
         nv_score.resizable(width=False, height=False)
 
         place_score = 0
-        while score_joueur < scores[0][place_score] :
+        while score_joueur < scores[0][place_score] and place_score <= len(scores) :
             place_score += 1
 
         can = Canvas(nv_score, height=300, width=300)
